@@ -6,7 +6,7 @@ import boto.s3.key
 import sys
 
 
-def s3fetch(s3bucket, s3key, aws_access_key, aws_secret_key, output_filename):
+def s3fetch(s3bucket, s3key, aws_access_key, aws_secret_key, output_filename, headers=None):
     
     connection = S3Connection(aws_access_key,aws_secret_key)
     bucket = connection.lookup(s3bucket)
@@ -14,7 +14,7 @@ def s3fetch(s3bucket, s3key, aws_access_key, aws_secret_key, output_filename):
         print 'bucket does not exist, may be cause by incorrect credentials'
         return 1
 
-    key = boto.s3.key.Key(bucket, s3key)
+    key = boto.s3.key.Key(bucket, s3key, headers=headers)
     if not key.exists():
         print 'key does not exist within given bucket'
         return 1
