@@ -5,16 +5,22 @@ import boto.s3.key
 
 import sys
 
+class NonExistingBucket(Exception):
+    pass
+
+class NonExistingKey(Exception):
+    pass
+
 def keySize(s3bucket, s3key, aws_access_key, aws_secret_key):
 
     connection = S3Connection(aws_access_key, aws_secret_key)
     bucket = connection.lookup(s3bucket)
     if bucket is None:
-        return 1
+        raise NonExistingBucket()
         
     key = boto.s3.key.Key(bucket, s3key)
     if not key.exists():
-        return 1
+        return NonExistingKey()
         
     return key.size
     
@@ -24,11 +30,11 @@ def keyAsFile(s3bucket, s3key, aws_access_key, aws_secret_key):
     bucket = connection.lookup(s3bucket)
 
     if bucket is None:
-        return 1
+        raise NonExistingBucket()
         
     key = boto.s3.key.Key(bucket, s3key)
     if not key.exists():
-        return 1
+        return NonExistingKey()
         
     key.open()
     return key
@@ -45,12 +51,12 @@ def fetch(s3bucket, s3key, aws_access_key, aws_secret_key, output_file, headers=
     connection = S3Connection(aws_access_key,aws_secret_key)
     bucket = connection.lookup(s3bucket)
     if bucket is None:
-        print 'bucket does not exist, may be cause by incorrect credentials'
+        sys.stderr.write('bucket does not exist, may be cause by incorrect credentials')
         return 1
 
     key = boto.s3.key.Key(bucket, s3key)
     if not key.exists():
-        print 'key does not exist within given bucket'
+        sys.stderr.write('key does not exist within given bucket')
         return 1
         
                 
@@ -76,8 +82,6 @@ def main(argv=None):
     
     args = parser.parse_args(argv[1:])
     
-    print args
-
     fname = args.output_filename
     if fname == '-':
         fname = sys.stdout
