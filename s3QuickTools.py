@@ -82,11 +82,15 @@ def main(argv=None):
     
     args = parser.parse_args(argv[1:])
     
+    fname = args.output_filename
+    if fname == '-':
+        fname = sys.stdout
+    
     return fetch(args.s3bucket,
                  args.s3key,
                  args.aws_access_key,
                  args.aws_secret_key,
-                 args.output_filename)
+                 fname)
     
 
 if __name__ == '__main__':
