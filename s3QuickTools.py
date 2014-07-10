@@ -71,7 +71,7 @@ def fetch(s3bucket, s3key, aws_access_key, aws_secret_key, output_file, headers=
 def main(argv=None):
     
     if argv is None:
-        argv = sys.argv
+        argv = sys.argv[1:]
 
     parser = argparse.ArgumentParser()
     parser.add_argument('s3bucket')
@@ -80,7 +80,7 @@ def main(argv=None):
     parser.add_argument('aws_secret_key')
     parser.add_argument('output_filename')
     
-    args = parser.parse_args(argv[1:])
+    args = parser.parse_args(argv)
     
     fname = args.output_filename
     if fname == '-':
